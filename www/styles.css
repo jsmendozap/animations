@@ -1,0 +1,10 @@
+p {
+    margin-bottom: 0.5rem;
+}
+
+#sketch-settings {
+    min-width: 200px;
+    max-width: 400px;
+    min-height: 150px;
+    padding: 10px;
+}
