@@ -1,10 +1,10 @@
-let vectorBox, conjugateBox;
+let vectorBox, conjugateBox, inverseBox;
 let slider, sliderText, selectOp;
 let vectorX, vectorY;
 let centerX, centerY; 
 const gridSize = 50;
 let radius = 150; 
-let angle = 45; 
+let angle = 3.1416/4; 
 let container;
 let canvas;
 
@@ -16,17 +16,18 @@ function setup() {
   centerX = width / 2;
   centerY = height / 2;
 
-  ({ slider: slider, sliderText: sliderText }= newSlider("Circle radius", 15, 60, 50, radius, 100, radius/gridSize));
-  vectorBox = newCheckBox("<strong> Main vector</strong>", true, 15, 110);
-  conjugateBox = newCheckBox("<strong> Conjugate</strong>", false, 15, 140);
-  selectOp = newSelect("Operation", 15, 170, ["Sum", "Multiplication", "Roots"])
+  ({ slider: slider, sliderText: sliderText }= newSlider("Circle radius", 15, 60, 50, 150, radius, radius/gridSize));
+  vectorBox = newCheckBox(" Main vector", true, 15, 110);
+  conjugateBox = newCheckBox(" Complex conjugate", false, 15, 140);
+  inverseBox = newCheckBox(" Multiplicative inverse", false, 15, 170);
+  selectOp = newSelect("Operation", 15, 200, ["", "Sum", "Multiplication", "Roots"])
 }
 
 function draw() {
   background(255);
   
   radius = slider.value();
-  sliderText.html(`<strong>Circle radius:</strong> ${radius/gridSize} units`);
+  sliderText.html(`Circle radius: ${radius/gridSize} units`);
 
   // Grilla
   drawGrid();
@@ -41,19 +42,25 @@ function draw() {
   vectorX = centerX + radius * cos(angle);
   vectorY = centerY - radius * sin(angle);
   
-  vectorBox.checked() ? drawVector(vectorX, vectorY, 'blue') : null;
+  vectorBox.checked() ? drawVector(vectorX, vectorY, 4, 4, angle, 'blue') : null;
   
   if (conjugateBox.checked()){
     vectorBox.checked() ? null : vectorBox.checked(true);
     const conjugateY = centerY + (centerY - vectorY);
-    drawVector(vectorX, conjugateY, 'rgb(16,180,16)')
+    drawVector(vectorX, conjugateY, 3, 3, TAU - angle, 'rgb(16,180,16)')
   }
   
+  if (inverseBox.checked()){
+    vectorBox.checked() ? null : vectorBox.checked(true);
+    let inverseX = centerX + gridSize**2/radius * cos(angle);
+    let inverseY = centerY - gridSize**2/radius * sin(angle);
+    drawVector(inverseX, inverseY, 5, 5, angle, 'rgb(161, 165, 106)');
+  }
+
   noStroke();
   fill(0);
   textSize(16);
-  let arg = (angle < 0) ? 2 * PI + angle : angle;
-  text(`Angle: ${(arg * 180 / PI).toFixed(2)}°`, 15, 25);
+  text(`Angle: ${(angle * 180 / PI).toFixed(2)}°`, 15, 25);
 }
 
 function drawGrid() {
@@ -98,16 +105,18 @@ function mouseDragged() {
     
     let dx = mouseX - centerX;
     let dy = centerY - mouseY; 
-    angle = atan2(dy, dx); // Ángulo en radianes
     
+    angle = atan2(dy, dx);
+    angle = (angle < 0) ? 2 * PI + angle : angle;
+
     exportToShiny();
   }
 }
 
 function exportToShiny() {
 
-  let real = (vectorX - centerX) / 50; 
-  let imaginary = (centerY - vectorY) / 50;
+  let real = (vectorX - centerX) / gridSize; 
+  let imaginary = (centerY - vectorY) / gridSize;
 
   Shiny.setInputValue('vector_coords', { real: real, imaginary: imaginary });
 }
@@ -138,7 +147,7 @@ function newSlider(title, x, y, min, max, set, value) {
   slider.style('width', '150px');
   slider.position(x, y + 25);    
   
-  let sliderText = createP(`<strong>${title}:</strong> ${value} units`); 
+  let sliderText = createP(`${title}: ${value} units`); 
   sliderText.parent('sketch-settings');
   sliderText.position(x, y);
 
@@ -152,17 +161,20 @@ function newSelect(title, x, y, opts){
   select.position(x + 75, y);
   opts.map(opt => {select.option(opt)});
 
-  let selectText = createP(`<strong>${title}:</strong>`); 
+  let selectText = createP(`${title}:`); 
   selectText.parent('sketch-settings');
   selectText.position(x, y);
 
   return select;
 }
 
-function drawVector(x, y, color) {
+function drawVector(x, y, rx, ry, angle, color) {
   stroke(color);
   strokeWeight(2);
   line(centerX, centerY, x, y);
   fill(color);
   circle(x, y, 10);
+
+  noFill();
+  arc(centerX, centerY, radius/rx, radius/ry, TAU - angle, TAU);
 }

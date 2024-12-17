@@ -1,8 +1,3 @@
-topics <- data.frame(
-  subject = c(rep("Mathematics", 1), rep("Physhics", 0)),
-  topic = c("Complex numbers")
-)
-
 ui <- page_sidebar(
     title = 'Animations',
     theme = bs_theme(bootswatch = "minty"),
@@ -21,7 +16,7 @@ ui <- page_sidebar(
     ),
     sidebar = sidebar(
       selectInput("subject", "Subject", topics$subject),
-      selectInput("topic", "Topic", NULL)
+      selectInput("topic", "Topic", topics$topic)
     ),
     card(
       full_screen = TRUE,
@@ -40,7 +35,7 @@ ui <- page_sidebar(
           div(id = "sketch-container", 
               style = "width: 400px; height: 400px;"), 
         ),
-        uiOutput('complex_card'),
+        uiOutput('dynamic_ui'),
         col_widths = c(6, 6)
       )
     )
