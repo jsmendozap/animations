@@ -2,6 +2,10 @@ p {
     margin-bottom: 0.5rem;
 }
 
+blockquote {
+    border-left: .25rem solid #5bc0de;
+}
+
 #sketch-settings {
     min-width: 200px;
     max-width: 400px;

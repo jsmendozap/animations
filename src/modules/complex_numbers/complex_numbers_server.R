@@ -29,7 +29,7 @@ complex_numbers_server <- function(id, coords) {
             
             **Multiplicative inverse**
             
-            $z^{{-1}} = \\frac{{\\bar{{z}}}}{{|z|^2}} = \\frac{{{conj}}}{{\\left(\\sqrt{{({real})^2 + \\ ({im})^2}}\\right)^2}} = {inv}$
+            $z^{{-1}} = \\frac{{\\bar{{z}}}}{{|z|^2}} = \\frac{{{conj}}}{{\\left(\\sqrt{{({real})^2 + \\ ({im})^2}}\\right)^2}} = {inv}$  
             $z^{{-1}} = \\frac{{1}}{{{mag}}}e^{{-i{rad}}}$  
             ",
             z = round(complex_point, 2),
@@ -56,17 +56,18 @@ complex_numbers_server <- function(id, coords) {
               "
               Given 2 complex numbers: 
   
-              $z_1 = {z}$
-              $z_2 = {z}$
+              $z_1 = {z}$  
+              $z_2 = -{real} + {im}i$
   
               They can perform the next operations:
   
               **Sum**
   
               It is performed component by component
-              
               ",
-              z = round(complex_point, 2)
+              z = round(complex_point, 2),
+              real = round(cos(120), 2),
+              im = round(sin(120), 2)
             )
           )
         )
