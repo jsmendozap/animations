@@ -1,8 +1,7 @@
-let mainVector;
 let vectorBox, conjugateBox, inverseBox;
-let slider, sliderText, selectOp;
-let centerX, centerY; 
-const gridSize = 50;
+let slider, sliderText, powerSlider, powerText, selectOp;
+let mainVector, centerX, centerY; 
+let gridSize = 50;
 let radius = 150; 
 let container;
 let canvas;
@@ -16,12 +15,15 @@ function setup() {
   centerY = height / 2;
 
   mainVector = Vector.fromPolar(radius / gridSize, PI/4);
+  setTimeout(exportToShiny, 100); 
 
-  ({ slider: slider, sliderText: sliderText } = newSlider("Circle radius", 15, 60, 50, 150, radius, radius/gridSize));
+  ({ slider: slider, sliderText: sliderText } = newSlider("Circle radius", 15, 60, 50, 150, radius, 3));
   vectorBox = newCheckBox(" Main vector", true, 15, 110);
   conjugateBox = newCheckBox(" Complex conjugate", false, 15, 140);
   inverseBox = newCheckBox(" Multiplicative inverse", false, 15, 170);
-  selectOp = newSelect("Operation", 15, 200, ["", "Sum", "Multiplication", "Roots"])
+  selectOp = newSelect("Operation", 15, 200, ["", "Sum", "Multiplication", "Power"]);
+  ({ slider: powerSlider, sliderText: powerText } = newSlider("Root number", 15, 230, 3, 10, 5, 5));
+  powerSlider.hide(); powerText.hide();
 }
 
 function draw() {
@@ -57,38 +59,66 @@ function draw() {
 
   if(selectOp.selected() !== "") {
     const vector2 = Vector.fromPolar(1, radians(120));
-    drawVector(vector2, 4, vector2.angle(), 'gray');
-    
-    switch (selectOp.selected()) {
+    switch (selectOp.selected()) {  
       case "Sum":
+        powerSlider.hide(); powerText.hide();
         const sumVector = mainVector.add(vector2);
         drawVector(sumVector, 3, sumVector.angle(), 'red');
+        drawVector(vector2, 4, vector2.angle(), 'gray');
+        vectorBox.checked(true);
+        gridSize = 50;
         break;
       
       case "Multiplication":
+        powerSlider.hide(); powerText.hide();
         const multVector = mainVector.multiply(vector2);
         drawVector(multVector, 3, multVector.angle(), 'red');
+        drawVector(vector2, 4, vector2.angle(), 'gray');
+        vectorBox.checked(true);
+        gridSize = 50;
         break;
+
+      case "Power":
+
+        powerSlider.show(); powerText.show();
+        powerSlider.changed(exportToShiny);;
+        const n = powerSlider.value(); 
+        powerText.html(`Root numbers: ${n}`);
+        const roots = mainVector.power(n);
+        strokeWeight(2);
+        stroke(0);
+
+        beginShape();
+        roots.forEach(vec => {
+          const x = centerX + vec.x * gridSize;
+          const y = centerY - vec.y * gridSize;
+          vertex(x, y)
+        });
+        endShape(CLOSE);
         
-      default:
-        break;
-    }
-  }
+        gridSize = 150;
+    } 
+  } 
 
   noStroke();
   fill(0);
   textSize(16);
-  text(`Angle: ${(mainVector.angle() * 180 / PI).toFixed(2)}°`, 15, 385);
+  if(selectOp.selected() !== 'Roots'){
+    text(`Angle: ${(mainVector.angle() * 180 / PI).toFixed(2)}°`, 15, 385);
+  }
 }
 
 function drawGrid() {
   stroke(225);
   strokeWeight(1);
 
-  for (let x = 0; x <= width; x += gridSize) {
+  const start = gridSize == 50 ? 0 : centerX - 150 - 30;
+  const step = gridSize == 50 ? gridSize : 30;
+
+  for (let x = start; x <= width; x += step) {
     line(x, 0, x, height);
   }
-  for (let y = 0; y <= height; y += gridSize) {
+  for (let y = start; y <= height; y += step) {
     line(0, y, width, y);
   }
 
@@ -102,13 +132,17 @@ function drawGrid() {
   fill(0);
   noStroke();
   textSize(12);
-  for (let x = 0; x <= width; x += gridSize) {
+  
+  const stepLabel = gridSize == 50 ? gridSize : 150;
+  const startLabel = gridSize == 50 ? 0 : centerX - 150
+
+  for (let x = startLabel; x <= width; x += stepLabel) {
     const labelX = (x - width / 2) / gridSize;
     if (labelX !== 0) {
       text(labelX, x + 2, height / 2 - 5);
     }
   }
-  for (let y = 0; y <= height; y += gridSize) {
+  for (let y = startLabel; y <= height; y += stepLabel) {
     const labelY = (height / 2 - y) / gridSize;
     if (labelY !== 0) {
       text(`${labelY}i`, width / 2 + 8, y - 2);
@@ -134,7 +168,8 @@ function exportToShiny() {
 
   Shiny.setInputValue('vector_coords', { 
     real: scaledX, 
-    imaginary: scaledY 
+    imaginary: scaledY,
+    roots: powerSlider.value()
   });
 }
 
@@ -162,7 +197,7 @@ function newSlider(title, x, y, min, max, set, value) {
   slider.style('width', '150px');
   slider.position(x, y + 25);    
   
-  let sliderText = createP(`${title}: ${value} units`); 
+  let sliderText = createP(`${title}: ${value}`); 
   sliderText.parent('sketch-settings');
   sliderText.position(x, y);
 
@@ -225,12 +260,17 @@ class Vector {
     )
   }
 
+  power(n) {
+    const angles = Array.from({ length: n }, (_, k) => (this.angle() + TAU * k) / n);
+    return angles.map(theta => Vector.fromPolar(1, theta));
+  }
+
   conjugate() {
     return new Vector(this.x, -this.y);
   }
 
   inverse() {
-    return Vector.fromPolar(1/this.modulus(), this.angle());
+    return Vector.fromPolar(1/this.modulus(), -this.angle());
   }
 
   angle() {
