@@ -82,6 +82,16 @@ complex_numbers_server <- function(id, coords) {
               $$z_1 \\cdot z_2 = r_1e^{{i\\theta_1}} \\cdot r_2e^{{i\\theta_2}} = r_1r_2e^{{(\\theta_1 + \\theta_2)i}}$$
               $$z_3 = ({r1}\\cdot{r2})e^{{i({arg1} + {arg2})}} = {r3}e^{{{arg3}i}}$$
 
+              **Division**
+
+              Division of two complex numbers $z_1$ and $z_2$ is given by: 
+              $$\\frac{{z_1}}{{z_2}} = \\frac{{z_1 \\cdot \\bar{{z_2}}}}{{|z_2|^2}}$$
+
+
+              In polar coordinates, the division of two complex numbers is given by:
+              $$\\frac{{z_1}}{{z_2}} = \\frac{{r_1e^{{i\\theta_1}}}}{{r_2e^{{i\\theta_2}}}} = \\frac{{r_1}}{{r_2}}e^{{(\\theta_1 - \\theta_2)i}}$$
+              $$\\frac{{z_1}}{{z_2}} = \\frac{{{r1}}}{{{r2}}}e^{{({arg1} - {arg2})i}} = {r4}e^{{{arg4}i}}$$
+
               **Power**
 
               Potentiation of complex numbers can be donde by: 
@@ -103,10 +113,12 @@ complex_numbers_server <- function(id, coords) {
               sum = round(sum(z, z2), 2),
               r1 = round(Mod(z), 2),
               r2 = round(Mod(z2), 2),
-              r3 = round(r1 * r2),
+              r3 = round(r1 * r2, 2),
+              r4 = round(r1/r2, 2),
               arg1 = round(Arg(z), 2),
               arg2 = round(Arg(z2), 2),
               arg3 = round(arg1 + arg2, 2),
+              arg4 = round(arg1 - arg2, 2),
               n = coords$roots,
               roots = complexPower(complex_point, n)
             )

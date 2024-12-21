@@ -21,7 +21,7 @@ function setup() {
   vectorBox = newCheckBox(" Main vector", true, 15, 110);
   conjugateBox = newCheckBox(" Complex conjugate", false, 15, 140);
   inverseBox = newCheckBox(" Multiplicative inverse", false, 15, 170);
-  selectOp = newSelect("Operation", 15, 200, ["", "Sum", "Multiplication", "Power"]);
+  selectOp = newSelect("Operation", 15, 200, ["", "Sum", "Multiplication", "Division", "Power"]);
   ({ slider: powerSlider, sliderText: powerText } = newSlider("Root number", 15, 230, 3, 10, 5, 5));
   powerSlider.hide(); powerText.hide();
 }
@@ -29,6 +29,7 @@ function setup() {
 function draw() {
   background(255);
 
+  slider.changed(exportToShiny);
   radius = slider.value();
   sliderText.html(`Circle radius: ${radius/gridSize} units`);
 
@@ -78,8 +79,16 @@ function draw() {
         gridSize = 50;
         break;
 
-      case "Power":
+      case "Division":
+        powerSlider.hide(); powerText.hide();
+        const divVector = mainVector.division(vector2);
+        drawVector(divVector, 3, divVector.angle(), 'red');
+        drawVector(vector2, 4, vector2.angle(), 'gray');
+        vectorBox.checked(true);
+        gridSize = 50;
+        break;
 
+      case "Power":
         powerSlider.show(); powerText.show();
         powerSlider.changed(exportToShiny);;
         const n = powerSlider.value(); 
@@ -257,6 +266,14 @@ class Vector {
     return Vector.fromPolar(
       this.modulus() * v.modulus(),
       this.angle() + v.angle()
+    )
+  }
+
+  division(v) {
+    const angle = this.angle() - v.angle();
+    return Vector.fromPolar(
+      this.modulus()/ v.modulus(),
+      angle >= 0 ? angle : TAU + angle
     )
   }
 
