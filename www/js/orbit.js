@@ -3,17 +3,21 @@ export default function orbitSketch(p5) {
   const S = 1361; // Solar constant
   const a = 1.496e11; // Semi-major axis
   let M = 0; // Mean anomaly
-  let SCALE, e, speed, step, slider, eLabel;
+  let SCALE, e, speed, step, slider, eLabel, sun, earth;
 
   const settings = document.getElementById("sketch-settings");
   settings.style.minWidth = "160px";
   settings.style.minHeight = "120px";
 
+  p5.preload = function () {
+    sun = p5.loadImage("sun.png");
+    earth = p5.loadImage("planet-earth.png");
+  };
+
   p5.setup = function () {
     const container = document.getElementById("sketch-container");
     const width = container.offsetWidth;
     const height = container.offsetHeight;
-    SCALE = 1.2e-9 * (width / 500);
 
     p5.createCanvas(width, height).parent("sketch-container");
     p5.angleMode(p5.RADIANS);
@@ -29,23 +33,19 @@ export default function orbitSketch(p5) {
     e = slider.value();
 
     p5.push();
-    p5.translate(0.45 * p5.width, 0.55 * p5.height);
+    p5.translate(0.48 * p5.width, 0.56 * p5.height);
 
     // Earth's orbit
     drawOrbit();
 
-    const { x, y, v, theta, r } = earthPosition(M);
-    p5.stroke(200);
-    p5.line(0, 0, x, y);
-
     // Sun
-    p5.fill("#ffe65d");
-    p5.stroke("orange");
-    p5.ellipse(0, 0, 25, 25);
+    sun.resize(55, 55);
+    p5.image(sun, -27.5, -27.5);
 
     // Earth
-    p5.fill("#2e84ce");
-    p5.ellipse(x, y, 15, 15);
+    const { x, y, v, theta, r } = earthPosition(M);
+    earth.resize(25, 25);
+    p5.image(earth, x - 12.5, y - 12.5);
     p5.pop();
 
     // Text
@@ -65,7 +65,7 @@ export default function orbitSketch(p5) {
     const width = container.offsetWidth;
     const height = container.offsetHeight;
     p5.resizeCanvas(width, height);
-    SCALE = 1.15e-9 * (width / 500);
+    SCALE = 1.15e-9 * (width / 530);
   };
 
   function drawOrbit() {

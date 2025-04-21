@@ -19,7 +19,15 @@ orbit_ui <- function(id) {
     nav_panel(
       icon("circle-info"),
       markdown(
-        "Learn more about [complex numbers](https://en.wikipedia.org/wiki/Complex_number)"
+        "
+        #### **Bibliography**
+
+        - Stull, R. (2016) Practical Meteorology: An Algebra-Based Survey of Atmospheric Science. University of British Columbia, British Columbia.
+        - Bonan, G. (2015) Ecological Climatology: Concepts and Applications. Cambridge University Press, Cambridge.
+        - https://www.csun.edu/~hcmth017/master/node13.html
+
+        Animation source code available on [Github](https://github.com/jsmendozap/animations/blob/main/www/js/orbit.js)
+        "
       )
     )
   )

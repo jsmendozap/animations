@@ -12,3 +12,12 @@ blockquote {
     min-height: 210px;
     padding: 10px;
 }
+
+.card-footer {
+    text-align: right;
+}
+
+.card-footer>a {
+    text-decoration: none;
+    font-size: 14px;
+}

@@ -10,7 +10,7 @@ ui <- page_sidebar(
     tags$script(
       "MathJax.Hub.Config({
           tex2jax: {
-            inlineMath: [['$','$'], ['\\(','\\)']],
+            inlineMath: [['$','$']],
             processEscapes: true
           }
         });"
@@ -33,7 +33,14 @@ ui <- page_sidebar(
             placement = 'left'
           )
         ),
-        div(id = "sketch-container", style = "width: 100%; height: 100%;")
+        div(id = "sketch-container", style = "width: 100%; height: 100%;"),
+        card_footer(
+          a(
+            href = "https://www.flaticon.com/",
+            target = "_blank",
+            "Icons by Flaticon.com"
+          )
+        )
       ),
       uiOutput('dynamic_ui'),
       col_widths = c(5, 7)
