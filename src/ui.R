@@ -1,5 +1,5 @@
 ui <- page_sidebar(
-  title = 'Climate animations',
+  title = 'ECSS animations',
   theme = bs_theme(bootswatch = "minty"),
   tags$head(
     withMathJax(),
