@@ -19,11 +19,13 @@ export default function orbitSketch(p5) {
     p5.angleMode(p5.RADIANS);
 
     plotControls();
+    exportToShiny();
   };
 
   p5.draw = function () {
     p5.background(255);
     step = (speed.value() * 2 * p5.PI) / 365.25;
+    slider.changed(exportToShiny);
     e = slider.value();
 
     p5.push();
@@ -50,9 +52,9 @@ export default function orbitSketch(p5) {
     p5.fill(0);
     p5.noStroke();
     p5.text(`Earth-Sun distance: ${(r / 1000).toFixed(1)} Km`, 5, 10);
-    p5.text(`Instantaneous speed: ${v.toFixed(1)} m/s`, 5, 25);
-    p5.text(`Avg. radiation: ${avgRadiation(theta).toFixed(1)} W/m²`, 5, 40);
-    p5.text(`Inst. radiation: ${radiation(r).toFixed(1)} W/m²`, 5, 55);
+    p5.text(`Instantaneous speed: ${v.toFixed(1)} m/s`, 5, 26);
+    p5.text(`Avg. radiation: ${avgRadiation(theta).toFixed(1)} W/m²`, 5, 42);
+    p5.text(`Inst. radiation: ${radiation(r).toFixed(1)} W/m²`, 5, 58);
     eLabel.html(`Eccentricity: ${e}`);
 
     M = (M + step) % p5.TWO_PI;
@@ -77,29 +79,6 @@ export default function orbitSketch(p5) {
       p5.vertex(x, y);
     }
     p5.endShape(p5.CLOSE);
-  }
-
-  function plotControls() {
-    eLabel = p5.createP().parent("sketch-settings").position(15, 55);
-
-    slider = p5
-      .createSlider(0.005, 0.4, 0.018, 0.001)
-      .parent("sketch-settings")
-      .position(15, 80)
-      .size(120);
-
-    const sLabel = p5
-      .createP("Animation speed:")
-      .parent("sketch-settings")
-      .position(15, 110);
-
-    speed = p5
-      .createSlider(0.01, 1, 1, 0.01)
-      .parent("sketch-settings")
-      .position(15, 130)
-      .size(80);
-
-    return { slider, speed, eLabel };
   }
 
   function earthPosition(M) {
@@ -154,5 +133,36 @@ export default function orbitSketch(p5) {
 
   function radius(theta) {
     return (a * (1 - e ** 2)) / (1 + e * p5.cos(theta));
+  }
+
+  function plotControls() {
+    eLabel = p5.createP().parent("sketch-settings").position(15, 55);
+
+    slider = p5
+      .createSlider(0.005, 0.4, 0.016, 0.001)
+      .parent("sketch-settings")
+      .position(15, 80)
+      .size(120);
+
+    const sLabel = p5
+      .createP("Animation speed:")
+      .parent("sketch-settings")
+      .position(15, 110);
+
+    speed = p5
+      .createSlider(0.01, 1, 1, 0.01)
+      .parent("sketch-settings")
+      .position(15, 130)
+      .size(80);
+
+    return { slider, speed, eLabel };
+  }
+
+  function exportToShiny() {
+    if (typeof Shiny !== "undefined" && Shiny.setInputValue) {
+      Shiny.setInputValue("data", {
+        e: slider.value(),
+      });
+    }
   }
 }

@@ -31,10 +31,9 @@ ui <- page_sidebar(
             icon("gear", class = "ms-auto"),
             div(id = "sketch-settings"),
             placement = 'left'
-          ),
-          'Plot'
+          )
         ),
-        div(id = "sketch-container", style = "width: 100%; height: 100%;"),
+        div(id = "sketch-container", style = "width: 100%; height: 100%;")
       ),
       uiOutput('dynamic_ui'),
       col_widths = c(5, 7)

@@ -3,8 +3,19 @@ orbit_ui <- function(id) {
 
   navset_card_tab(
     full_screen = TRUE,
-    nav_panel("Components", uiOutput(ns("complex_comp"))),
-    nav_panel("Operations", uiOutput(ns("complex_op"))),
+    nav_panel("Background", uiOutput(ns("info"))),
+    nav_panel("Average radiation", uiOutput(ns("derivation"))),
+    nav_panel(
+      "Sensitive analysis",
+      uiOutput(ns("sensitivity")),
+      shiny::sliderInput(
+        inputId = ns("ne"),
+        label = "New eccentricity:",
+        min = 0.005,
+        max = 0.06,
+        value = 0.017
+      )
+    ),
     nav_panel(
       icon("circle-info"),
       markdown(

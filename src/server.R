@@ -9,9 +9,7 @@ server <- function(input, output, session) {
     output$dynamic_ui <- renderUI({
       modules[[input$topic]]$ui("topic_module")
     })
-  })
 
-  observeEvent(input$vector_coords, {
-    modules[[input$topic]]$server("topic_module", input$vector_coords)
+    modules[[input$topic]]$server("topic_module", reactive(input$data))
   })
 }
