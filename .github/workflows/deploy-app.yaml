@@ -17,10 +17,6 @@ on:
 jobs:
   shinylive:
     uses: posit-dev/r-shinylive/.github/workflows/deploy-app.yaml@actions-v1
-    with:
-      deploy-branch: gh-pages
-      deploy: true
     permissions:
-      contents: write
-      pages: write
-      id-token: write
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
